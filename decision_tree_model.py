@@ -53,12 +53,13 @@ def add_time_until_repair(df: pd.DataFrame) -> pd.DataFrame:
 df_ = read_excel_file(path)
 df = add_time_until_repair(df_)
 df["property_age"] = 2025 - df["construction_year"]
+df["repairs_per_year"] = df["repair_count"] / (df["property_age"] + 1)
 print("Columns in the dataframe:", df.columns.tolist())
 
 # ---------- 3. Feature selection ----------
 # Avoid high-cardinality categorical features like property_id
 categorical_features = ['region_name']  # small-cardinality categories
-numeric_features = ["occupants", "time_until_repair", "property_age"]
+numeric_features = ["occupants", "time_until_repair", "property_age", "repair_count", "repairs_per_year"]
 
 corr = df[["repair_count", "total_repair_cost","time_until_repair","occupants","property_age"]].corr()
 print("Correlation between repair_count and total_repair_cost:", corr)
@@ -78,8 +79,15 @@ X_cat_sparse = encoder.fit_transform(df[categorical_features])
 # Combine numeric and categorical features into one sparse matrix
 X_final = sparse.hstack([X_num, X_cat_sparse])
 
+# ---------- 7. Train/test split ----------
+# Optional stratified split by cost bins for better balance
+y_bins = pd.qcut(y, q=5, labels=False)
+X_train, X_test, y_train, y_test = train_test_split(
+    X_final, y, test_size=0.2, random_state=42, stratify=y_bins
+)
+
 # ---------- 6. Train/test split ----------
-X_train, X_test, y_train, y_test = train_test_split(X_final, y, test_size=0.2, random_state=42)
+# X_train, X_test, y_train, y_test = train_test_split(X_final, y, test_size=0.2, random_state=42)
 
 # ---------- 7. Train Decision Tree ----------
 tree = DecisionTreeRegressor(max_depth=5, random_state=42)  # limit depth to avoid overfitting

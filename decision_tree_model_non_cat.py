@@ -73,10 +73,13 @@ if log_transform:
 
 # ---------- 7. Train/test split ----------
 # Optional stratified split by cost bins for better balance
-y_bins = pd.qcut(df["total_repair_cost"], q=5, labels=False)
+y_bins = pd.qcut(y, q=5, labels=False,duplicates="drop")
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y_bins
 )
+# X_train, X_test, y_train, y_test = train_test_split(
+#     X, y, test_size=0.2, random_state=42, stratify=None
+# )
 
 # ---------- 8. Train Decision Tree ----------
 tree = DecisionTreeRegressor(max_depth=5, random_state=42)
@@ -99,5 +102,5 @@ print(f"Decision Tree RMSE on original scale: {rmse:.2f}")
 
 # ---------- 12. Feature importance ----------
 importances = pd.Series(tree.feature_importances_, index=numeric_features)
-print("\nTop features driving total_repair_cost:")
+print("\nTop features driving repair costs:")
 print(importances.sort_values(ascending=False))
