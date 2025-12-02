@@ -87,7 +87,17 @@ def generate_plots(df: pd.DataFrame, title_prefix=""):
         plt.tight_layout()
         plt.show()
 
-    # -------- Scatter 2: repair_count vs repair_year --------
+     # -------- Scatter 2: total_repair_cost vs construction_year --------
+    if {"construction_year", "total_repair_cost"}.issubset(df.columns):
+        plt.figure(figsize=(8, 5))
+        plt.scatter(df["construction_year"], df["total_repair_cost"], alpha=0.5)
+        plt.title(f"{title_prefix} Total Repair Cost vs Construction Year")
+        plt.xlabel("Construction Year")
+        plt.ylabel("Total Repair Cost")
+        plt.tight_layout()
+        plt.show()
+
+    # -------- Scatter 3: repair_count vs repair_year --------
     if {"repair_year", "repair_count"}.issubset(df.columns):
         plt.figure(figsize=(8, 5))
         plt.scatter(df["repair_year"], df["repair_count"], alpha=0.5)
@@ -96,8 +106,18 @@ def generate_plots(df: pd.DataFrame, title_prefix=""):
         plt.ylabel("Repair Count")
         plt.tight_layout()
         plt.show()
+    
+     # -------- Scatter 4: Repair Count vs Construction Year --------
+    if {"construction_year", "repair_count"}.issubset(df.columns):
+        plt.figure(figsize=(8, 5))
+        plt.scatter(df["construction_year"], df["repair_count"], alpha=0.5)
+        plt.title(f"{title_prefix} Repair Count vs Construction Year")
+        plt.xlabel("Construction Year")
+        plt.ylabel("Repair Count")
+        plt.tight_layout()
+        plt.show()
 
-    # -------- Scatter 3: repair_count vs property_age --------
+    # -------- Scatter 5: Repair Count vs Property Age --------
     if {"property_age", "repair_count"}.issubset(df.columns):
         plt.figure(figsize=(8, 5))
         plt.scatter(df["property_age"], df["repair_count"], alpha=0.5)
@@ -106,7 +126,6 @@ def generate_plots(df: pd.DataFrame, title_prefix=""):
         plt.ylabel("Repair Count")
         plt.tight_layout()
         plt.show()
-
 
 # ---------------------------------------------------------
 # Main
